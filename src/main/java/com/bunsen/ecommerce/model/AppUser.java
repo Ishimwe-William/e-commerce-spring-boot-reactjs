@@ -1,56 +1,58 @@
 package com.bunsen.ecommerce.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "users",
+@Table(name = "app_users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
-@Data
-@NoArgsConstructor
-public class LocalUser {
+@Getter
+@Setter
+public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
+
     @Column(nullable = false)
     private String firstname;
+
     @Column(nullable = false)
     private String lastname;
+
     @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String username;
+
     @Column(nullable = false)
     private String password;
 
     private boolean enabled;
     private boolean tokenExpired;
-    private Date created_at;
-    private Date updated_at;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @CreationTimestamp
+    private Date createdAt;
+
+    @UpdateTimestamp
+    private Date updatedAt;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles = new ArrayList<>();
-
-
-    @PrePersist
-    public void setDates() {
-        this.created_at = new Date();
-        this.updated_at = new Date();
-    }
-
-    @PreUpdate
-    public void updateDates() {
-        this.updated_at = new Date();
-    }
+    @JsonManagedReference
+    private Set<Role> roles = new HashSet<>();
 }

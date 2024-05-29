@@ -2,7 +2,8 @@ package com.bunsen.ecommerce.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.bunsen.ecommerce.model.LocalUser;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.bunsen.ecommerce.model.AppUser;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class JWTService {
         algorithm = Algorithm.HMAC256(algorithmKey);
     }
 
-    public String generateJWT(LocalUser user) {
+    public String generateJWT(AppUser user) {
         return JWT.create().withClaim(USERNAME_KEY, user.getUsername())
                 .withExpiresAt((new Date(System.currentTimeMillis() + (1000 * expireInSeconds))))
                 .withIssuer(issuer)
@@ -41,10 +42,15 @@ public class JWTService {
         return JWT.decode(token).getClaim(USERNAME_KEY).asString();
     }
 
-    public String generateVerificationJWT(LocalUser user){
+    public String generateVerificationJWT(AppUser user){
         return JWT.create().withClaim(EMAIL_KEY, user.getEmail())
                 .withExpiresAt((new Date(System.currentTimeMillis() + (1000 * expireInSeconds))))
                 .withIssuer(issuer)
                 .sign(algorithm);
+    }
+
+    public boolean isTokenExpired(String token) {
+        DecodedJWT decodedJWT = JWT.decode(token);
+        return decodedJWT.getExpiresAt().before(new Date());
     }
 }

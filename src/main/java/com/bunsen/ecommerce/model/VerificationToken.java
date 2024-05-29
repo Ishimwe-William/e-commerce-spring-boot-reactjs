@@ -25,5 +25,5 @@ public class VerificationToken {
 
     @ManyToOne
     @JoinColumn(name ="user_id", nullable = false)
-    private LocalUser user;
+    private AppUser user;
 }

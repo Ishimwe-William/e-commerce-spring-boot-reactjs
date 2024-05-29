@@ -21,7 +21,7 @@ public class RegistrationBody {
     @NotNull
     @NotBlank
     @Size(max = 32, min = 8)
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")
+//    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")
     private String password;
 
     @NotNull
